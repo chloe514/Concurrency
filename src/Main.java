@@ -1,15 +1,28 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+    public static void main(String[] args) throws InterruptedException {
+        SharedBuffer sharedBuffer = new SharedBuffer(10);  // Create a shared buffer with a maximum size of 10
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        Producer producer = new Producer(sharedBuffer);  // Create a producer with the shared buffer
+        Consumer consumer = new Consumer(sharedBuffer);  // Create a consumer with the shared buffer
+
+        // Create and start threads for the producer and consumer
+        Thread producerThread = new Thread(producer);
+        Thread consumerThread = new Thread(consumer);
+
+        producerThread.start();
+        consumerThread.start();
+
+        // Let the threads run for 5 seconds
+        Thread.sleep(5000);
+
+        // Stop the threads
+        sharedBuffer.stop();
+
+        // Wait for both threads to finish
+        producerThread.join();
+        consumerThread.join();
+
+        System.out.println("Finished processing");
     }
 }
+
